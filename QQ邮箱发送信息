@@ -34,9 +34,9 @@ for i in datalist:
         print('GG')
     else:
         mail_host = "smtp.qq.com"  # QQ邮箱服务器
-        from_addr = "1113452717@qq.com"  # 发件人电子邮箱
-        from_pwd = "sohkprosgekzfeab"  # SMTP授权码 ndxruqqjqwinihge sohkprosgekzfeab
-        to_addrs = '1113452717@qq.com'  # 收件人电子邮箱
+        from_addr = "1111111@qq.com"  # 发件人电子邮箱
+        from_pwd = "xxxxxxxxx" # SMTP授权码 
+        to_addrs = '1111111@qq.com'  # 收件人电子邮箱
 
         text = "资源数据" + str(i) + "抓取失败，请去查看！"
         message = MIMEText(text, 'plain', 'utf-8')
