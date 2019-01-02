@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+
+# encoding: utf-8
+
+import pymysql
+from pymysql.cursors import DictCursor
+
+class MysqlUtils(object):
+    """
+    mysql数据库连接对象，功能包括数据库连接断开
+    """
+
+
+    def __init__(self,dbconf):
+        self._conn=pymysql.connect( host=dbconf['DBHOST'] , port=dbconf['DBPORT'] , user=dbconf['DBUSER'] , passwd=dbconf['DBPWD'] ,
+                              db=dbconf['DBNAME'],use_unicode=False,charset=dbconf['DBCHARSET'],cursorclass=DictCursor)
+        self._cursor = self._conn.cursor()
+
+
+
+
+
+    def close(self):
+        self._cursor.close()
+        self._conn.close()
+
+    def get_one(self, sql, param=None):
+        """
+        执行查询，取出一条
+        :param sql:
+        :param param:可选参数，条件(列表，元组)
+        :return:返回结果集，dict/False
+        """
+        return self._execute_query(sql,param)[0] if self._execute_query(sql,param) else False
+
+    def get_all(self,sql,param=None):
+        """
+        执行查询取出所有
+        :param sql: 查询语句
+        :param param: 可选参数条件，元组
+        :return: list/False
+        """
+        return self._execute_query(sql,param)
+
+
+    def _execute_query(self,sql,param=None):
+        if param is None:
+            count = self._cursor.execute(sql)
+        else:
+            count = self._cursor.execute(sql, param)
+        if count > 0:
+            result = self._cursor.fetchall()
+        else:
+            result = False
+        return result
+
+    def _execute_operate(self,sql,param=None):
+        """
+        非查询操作 单次操作
+        :param sql:
+        :param param:
+        :return:
+        """
+        try:
+            if param is None:
+                count = self._cursor.execute(sql)
+            else:
+                count = self._cursor.execute(sql, param)
+            self._conn.commit()
+            return count
+        except:
+            self._conn.rollback()
+            return -1
+
+    def _execute_operates(self,sql,param=None):
+        """
+        非查询操作 many 多次操作
+        :param sql:
+        :param param:
+        :return:
+        """
+        try:
+            if param is None:
+                count = self._cursor.executemany(sql)
+            else:
+                count = self._cursor.executemany(sql, param)
+            self._conn.commit()
+            return count
+        except:
+            self._conn.rollback()
+            return -1
+
+
+    def insert_one(self,sql,param=None):
+        return self._execute_operate(sql,param)
+
+    def delete_many(self,sql):
+        count = self._cursor.execute(sql)
+        self._conn.commit()
+        # print(count)
+        return count
+
+    def insert_many(self,sql,param=None):
+        return self._execute_operates(sql, param)
+
+    def execute_sql(self,sql,param=None):
+        count=self._cursor.execute(sql,param)
+        self._conn.commit()
+        #print(count)
+        return count
+
+    def get_cursor(self):
+        return self._cursor
+
+
+
+
