@@ -1,0 +1,56 @@
+# -*- coding: utf-8 -*-
+import xlrd
+import time
+now_timestamp = int(time.time())
+from mysql_conf import settings
+from mysql_tools import MysqlUtils
+
+target_db = settings.get('bendi_218') #源数据和目标数据
+target_conn = MysqlUtils(target_db)
+
+wb = xlrd.open_workbook(r"C:\Users\kk\Desktop\gai_shujukebiao\zhenghe.xlsx") # 打开的这个excel必须存在，否则会报错
+# 获取所有sheet页的名字
+print(wb.sheet_names())#获取到对应的sheet名字
+# 按名字查找第二张表单
+# sheet=wb.sheet_by_name('abc2')#根据sheet页的名字获取sheet页
+sheet = wb.sheet_by_index(0)  # 根据sheet页的索引获取sheet页
+# 获取sheet页的行数和列数
+print(sheet.nrows)
+total_source = sheet.nrows - 1  # 总资源量
+# print(sheet.ncols)
+# 打印每行信息
+num = 0
+nums = 0
+createtime,updatetime = now_timestamp
+for rownum in range(sheet.nrows):  # 循环取每行的数据
+    # print(sheet.row_values(rownum))  # 取每行的数据
+    Each_row = sheet.row_values(rownum)
+    appeal_id = Each_row[0] #获取到每行对应的数据
+    content = Each_row[1]
+    type = int(Each_row[2])
+    if type == 1:
+        pid = 0
+        # print(appeal_id, content, pid, type, createtime, updatetime)
+        datas_list = (appeal_id, content, pid, type, createtime, updatetime)
+        print(datas_list)
+        sql_insert_phone = "INSERT INTO `sys_legal_atlas` (`appeal_id`,`content`,`pid`,`type`,`createtime`,`updatetime`) VALUES (%s,%s,%s,%s,%s,%s)"
+        aa = target_conn.insert_one(sql_insert_phone, (datas_list))
+        if aa:
+            print("插入成功")
+        else:
+            print("插入失败")
+    else:
+        search_report_ids = 'select * from sys_legal_atlas order by id desc limit 0,1' #获取最新那条数据
+        res_finance = target_conn.get_all(search_report_ids)
+        for query in res_finance:
+            # print(query)
+            pid = query.get('id')
+            # print(appeal_id,content,pid,type,createtime,updatetime)
+            datas_list = (appeal_id, content, pid, type, createtime, updatetime)
+            print(datas_list)
+            sql_insert_phone = "INSERT INTO `sys_legal_atlas` (`appeal_id`,`content`,`pid`,`type`,`createtime`,`updatetime`) VALUES (%s,%s,%s,%s,%s,%s)"
+            aa = target_conn.insert_one(sql_insert_phone, (datas_list))
+            if aa:
+                print("插入成功")
+            else:
+                print("插入失败")
