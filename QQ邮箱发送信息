@@ -1,0 +1,57 @@
+import smtplib
+from email.mime.text import MIMEText
+from email.utils import formataddr
+
+import threading
+import time
+from datetime import timedelta
+from datetime import datetime
+from mysql_conf import settings
+from mysql_tools import MysqlUtils
+
+# OA_dbs = settings.get('OA_db')
+# OA_conn = MysqlUtils(OA_dbs)
+target_db = settings.get('target_db')  # 源数据和目标数据
+target_db_conn = MysqlUtils(target_db)
+
+before = datetime.now() - timedelta(days=1)
+DayTime = str(before)[0:10]
+datalist = ['Day_Total_account', 'Day_plan_eachequipment_city', 'Day_plan_totalequipment_city', 'unit_total_class',
+            'unit_small_class', 'Day_creative_city', 'Day_keyword01_account',
+            'Day_keyword02_account', 'Day_keyword03_account', 'Day_keyword04_account', 'Day_keywordxinxi_account',
+            'Day_keyword_total_account',
+            'Day_search01_city', 'Day_search02_city',
+            'Day_search03_city', 'Day_search04_city', 'Day_searchxinxi_city', 'Day_search_total_city',
+            'search_01_report', 'search_02_report', 'search_03_report', 'search_04_report', 'search_xinxi_report']
+for i in datalist:
+    sql_query_ask = "SELECT count(time) FROM " + str(i) + " WHERE time = %s"
+    res_ask = target_db_conn.get_one(sql_query_ask, (DayTime,))
+
+    GG = str(res_ask).split(':')
+    GGs = GG[1].split('}')[0]
+    print(GGs)
+    if int(GGs):
+        print('GG')
+    else:
+        mail_host = "smtp.qq.com"  # QQ邮箱服务器
+        from_addr = "1113452717@qq.com"  # 发件人电子邮箱
+        from_pwd = "sohkprosgekzfeab"  # SMTP授权码 ndxruqqjqwinihge sohkprosgekzfeab
+        to_addrs = '1113452717@qq.com'  # 收件人电子邮箱
+
+        text = "资源数据" + str(i) + "抓取失败，请去查看！"
+        message = MIMEText(text, 'plain', 'utf-8')
+        message['From'] = formataddr(["发件人昵称", from_addr], 'utf-8')
+        message['To'] = formataddr(["收件人昵称", to_addrs], 'utf-8')
+
+        subject = 'Python SMTP 邮件'
+        message["Subject"] = subject
+
+        try:
+            smtpObj = smtplib.SMTP_SSL(mail_host, 465)  # 465 为SMTP端口号
+            smtpObj.set_debuglevel(1)
+            smtpObj.login(from_addr, from_pwd)
+            smtpObj.sendmail(from_addr, to_addrs, message.as_string())
+            smtpObj.quit()  # 关闭连接
+            print("邮件发送成功")
+        except smtplib.SMTPException:
+            print("Error：无法发送邮件")
