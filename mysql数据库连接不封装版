@@ -1,0 +1,52 @@
+# -*- coding: utf-8 -*-
+from mysql_conf import settings
+from datetime import timedelta
+from datetime import datetime
+from DBUtils.PooledDB import PooledDB
+import threading
+import pymysql
+before = datetime.now() - timedelta(days=1)
+DayTime = str(before)[0:10]
+
+source_dbs = settings.get('target_db')
+print(source_dbs)
+host = source_dbs.get('DBHOST')
+user = source_dbs.get('DBUSER')
+port = source_dbs.get('DBPORT')
+pasword = source_dbs.get('DBPWD')
+db = source_dbs.get('DBNAME')
+charset = source_dbs.get('DBCHARSET')
+pool = None
+limit_count = 3  # 最低预启动数据库连接数量
+
+class MyThread(threading.Thread):
+    def __init__(self,num,accounts,limit_count,host,user,pasword,db,port,charset):
+        super(MyThread, self).__init__()  # 重构run函数必须要写
+        self.n = num
+        self.accounts = accounts
+        self.limit_count = limit_count
+        self.host = host
+        self.user = user
+        self.pasword = pasword
+        self.db = db
+        self.port = port
+        self.charset = charset
+    def run(self):
+        num_s = self.n
+        pool = PooledDB(pymysql, self.limit_count, host=self.host, user=self.user, passwd=self.pasword, db=self.db,
+                             port=self.port, charset=self.charset, use_unicode=True)
+        conn = pool.connection()
+        cursor = conn.cursor()
+        sql = "SELECT * FROM Keywords_0%s_report WHERE time = %s"
+        cursor.execute(sql,(num_s,DayTime,))
+        res_ask = cursor.fetchall()
+        for i in res_ask:  # 每次执行一条
+            print(type(i[6]))
+            print(i)
+            print(i[1])
+        cursor.close()
+        conn.close()
+if __name__ == "__main__":
+    t1 = MyThread(1,'账号一',limit_count,host,user,pasword,db,port,charset)
+    t1.start()
+    t1.join()
