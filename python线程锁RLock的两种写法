@@ -1,0 +1,24 @@
+import threading
+
+import time
+
+lock = threading.RLock()
+if __name__ == '__main__':
+
+    # 以下两种写法完全等效
+
+    # ----------------------------------------
+    if lock.acquire(timeout=-1):
+        print("我正在和lock快乐地玩耍...")
+        time.sleep(5)
+        lock.release()
+    # ----------------------------------------
+
+
+    # ----------------------------------------
+    with lock:
+        print("我正在和lock快乐地玩耍...")
+        time.sleep(5)
+    # ----------------------------------------
+
+    pass
