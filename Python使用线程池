@@ -1,0 +1,95 @@
+'''
+使用线程池
+'''
+import random
+import threading
+
+import threadpool
+import time
+
+
+#=================================================================
+# 参数皆为单个元素，用于执行只有一个参数的并发函数请求
+argsList1 = [
+    "张三丰", "赵四", "王五", "六爷", "洪七公", "朱重八", "马英九"
+]
+
+# 该函数只有一个参数，参数列表使用argsList1格式
+def kill(who):
+    tname = threading.current_thread().getName()
+    # print(threading.current_thread().isDaemon())
+
+    print("%s开始杀%s..." % (tname, who))
+    time.sleep(random.randint(1, 5))
+    print("-----%s杀死了%s-----" % (tname, who))
+    pass
+#=================================================================
+
+
+
+
+#=================================================================
+# 当请求函数包含1个以上的参数时，必须使用如下格式：
+# [ ([位置参数列表],{关键字参数字典}),...    ]
+argsList2 = [
+    ([1, "今天"], {"who": "张三丰", "reason": "已经很老了"}),
+    ([2, "明天"], {"who": "赵四", "reason": "我是刘能的朋友"}),
+    ([3, "后天"], {"who": "王五", "reason": "隔壁老王嫌疑人"}),
+    ([4, "今天"], {"who": "六爷"}),
+    ([5, "明天"], {"reason": "我是刘能的朋友"}),
+    ([6, "后天"], None),
+]
+
+# 该函数有位置参数和关键字参数，参数列表使用argsList2格式
+def killGood(order, when, who="No one", reason="凡人皆有一死"):
+    tname = threading.current_thread().getName()
+    # print(threading.current_thread().isDaemon())
+
+    print("%s开始杀%s...，排名%d,时间%s,原因：%s" % (tname, who, order, when, reason))
+    time.sleep(random.randint(1, 5))
+    print("-----%s杀死了%s-----" % (tname, who))
+
+    # print(5 / 0)
+    # print("fuck")
+    return "well done"
+    pass
+
+
+#=================================================================
+
+# 请求执行结束回调
+# request=已完成的请求
+# result=任务的返回值
+def onKillReturn(request, result):
+    print("onKillReturn", request, result)
+
+
+# 异常处理回调
+# request=发声异常的请求
+# exception=请求内发声的异常
+def handleMyException(request, exception):
+    print("handleMyException", request, exception)
+
+
+if __name__ == '__main__':
+    # 创建一个最大并发为4的线程池
+    pool = threadpool.ThreadPool(4)
+
+    # 创建一组执行kill()函数的请求，参数各异
+    # requests = threadpool.makeRequests(kill, argsList1)
+    # requests = threadpool.makeRequests(killGood, args2List2)
+
+    # killGood=要并发执行的任务(函数名)
+    # argsList2=killGood的参数列表
+    # callback=任务结束的回调函数
+    # exc_callback=异常处理回调函数
+    requests = threadpool.makeRequests(killGood, argsList2, callback=onKillReturn, exc_callback=handleMyException)
+
+    # 将这组请求丢入线程池
+    for req in requests:
+        pool.putRequest(req)
+
+    # 阻塞等待全部请求返回（线程池创建的并发默认为【守护线程】）
+    pool.wait()
+    print("over")
+    pass
