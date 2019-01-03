@@ -1,0 +1,64 @@
+from tkinter import *
+import time
+class Calculator:
+    def __init__(self):
+        window = Tk()
+        window.title("房贷计算器")
+
+        # 定义数值文本变量
+        self.amountVar = StringVar()
+        self.rateVar = StringVar()
+        self.yearsVar = StringVar()
+        self.monthVar = StringVar()
+        self.totalVar = StringVar()
+        self.monthVar.set("0.00")
+        self.totalVar.set("0.00")
+
+        # 整体面板，方便设置总体的边距
+        frame = Frame(window)
+        frame.pack(padx=10, pady=10)
+
+        # 创建所有标签
+        Label(frame, text="贷款金额").grid(row=1, column=1)
+        Label(frame, text="年化利率").grid(row=2, column=1, pady=5)
+        Label(frame, text="贷款年限").grid(row=3, column=1, pady=5)
+        Label(frame, text="每月还款").grid(row=4, column=1, pady=5)
+        Label(frame, text="还款总计").grid(row=5, column=1)
+
+        # 第二列：Entry*3,Label*2
+        Entry(frame, justify=RIGHT, textvariable=self.amountVar).grid(row=1, column=2)
+        Entry(frame, justify=RIGHT, textvariable=self.rateVar).grid(row=2, column=2)
+        Entry(frame, justify=RIGHT, textvariable=self.yearsVar).grid(row=3, column=2)
+        Label(frame, text="0.00",textvariable=self.monthVar).grid(row=4, column=2, sticky=E)
+        Label(frame, text="0.00",textvariable=self.totalVar).grid(row=5, column=2, sticky=E)
+
+        # 第三列，一堆Message
+        Message(frame, text="元").grid(row=1, column=3)
+        Message(frame, text="%").grid(row=2, column=3)
+        Message(frame, text="年").grid(row=3, column=3)
+        Message(frame, text="元").grid(row=4, column=3)
+        Message(frame, text="元").grid(row=5, column=3)
+
+        # 空Frame以撑开空间
+        Frame(frame, height=5).grid(row=6, column=1, columnspan=3, pady=5)
+
+        # 按钮
+        Button(frame, width=30, text="计算", command=self.calculate).grid(row=7, column=1, columnspan=3, pady=0)
+
+        window.mainloop()
+
+    def calculate(self):
+        amount = eval(self.amountVar.get())
+        rate = eval(self.rateVar.get()) / 12 / 100
+        years = eval(self.yearsVar.get())
+
+        monthPayment = amount * rate / (1 - 1 / (1 + rate) ** (12 * years))
+        totalPayment = monthPayment * 12 * years
+
+        self.monthVar.set(format(monthPayment,".2f"))
+        self.totalVar.set(format(totalPayment,".2f"))
+
+
+if __name__ == '__main__':
+    Calculator()
+    pass
