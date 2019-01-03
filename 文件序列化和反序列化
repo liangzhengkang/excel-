@@ -1,0 +1,19 @@
+import pickle
+
+if __name__ == '__main__':
+    outfile = open(r"../res/img/1.dat","xb")
+    # 卸载，序列化
+    pickle.dump(123,outfile)
+    pickle.dump(45.6,outfile)
+    pickle.dump(True,outfile)
+    pickle.dump(["fuck","shit","welcome"],outfile)
+    outfile.close()
+
+    infile = open(r"../res/img/1.dat", "rb")
+    # 加载，反序列化
+    print(pickle.load(infile))
+    print(pickle.load(infile))
+    print(pickle.load(infile))
+    print(pickle.load(infile))
+    infile.close()
+    pass
