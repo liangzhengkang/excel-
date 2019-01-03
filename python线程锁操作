@@ -1,0 +1,46 @@
+import threading
+from threading import Thread
+
+import time
+
+# account = threading.Lock()
+account = threading.RLock()  # 可以在线程内多次锁定
+
+
+class BankBook(Thread):
+    def run(self):
+
+        # account线程内第一次锁定
+        if account.acquire(timeout=10):
+            print("存折已锁定账户，存折正在愉快地玩耍...")
+            time.sleep(10)
+
+            # ---线程内死锁（Lock在线程内不可多次锁定，而RLock可以）---
+            # account线程内第二次锁定
+            if account.acquire():
+                print("四大行业务员正在愉快地聊天...")
+                time.sleep(10)
+                account.release()
+            # --------------------------------------------------------
+
+            account.release()
+        else:
+            print("存折等待超时")
+        print("存折业务完毕")
+
+
+class BankCard(Thread):
+    def run(self):
+        if account.acquire(timeout=-1):
+            print("银行卡已锁定账户，银行卡正在愉快地玩耍...")
+            time.sleep(6)
+            account.release()
+        else:
+            print("银行卡等待超时")
+        print("银行卡业务完毕")
+
+
+if __name__ == '__main__':
+    # BankBook().start()
+    BankCard().start()
+    pass
