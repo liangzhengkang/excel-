@@ -1,0 +1,26 @@
+import threading
+from threading import Thread
+import time
+
+data = threading.local()
+print(type(data))
+
+
+def doSomethingII(num):
+    tName = threading.current_thread().getName()
+    data.num = num
+    for i in range(5):
+        data.num += "1"
+        time.sleep(1)
+        print(tName, "data.num=", data.num)
+    pass
+
+
+if __name__ == '__main__':
+    # threading.local的例子
+    # t1 = Thread(target=doSomething, args=(1,),name="foo")
+    t2 = Thread(target=doSomethingII, args=("2",),name="bas")
+    # t1.start()
+    t2.start()
+
+    print("over")
