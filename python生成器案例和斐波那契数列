@@ -1,0 +1,90 @@
+'''
+生成器:带有yield的函数
+'''
+import time
+
+
+# 一个简单的生成器：间断性地生成（“返回”）一个又一个的值，每生成一次，就将CPU执行权让出,直到外界next(generator)
+def myGenerator():
+    mlist = [1, 2, 3, 4, 5]
+    # return mlist[0],mlist[1]
+    for item in mlist:
+        print("yield %d..." % (item))
+        yield item  # 暂停等候下一次迭代
+        print("yield ok!")
+
+
+def simpleGenerator():
+    mg = myGenerator()
+    print(type(mg))  # <class 'generator'>
+    while True:
+        try:
+            print("give me one")
+            item = next(mg)
+            print("-----item=%d-----\n" % (item))
+            time.sleep(3)
+        except StopIteration:
+            break
+
+
+# 0,1,1,2,3,5,8...
+# 求斐波那契数列第N项递归实现
+def getFibonacci(n):
+    if n == 0:
+        return 0
+    elif n == 1:
+        return 1
+    else:
+        return getFibonacci(n - 1) + getFibonacci(n - 2)
+
+
+# 求斐波那契数列第N项非递归实现
+def getFibonacciII(n):
+    a = 0
+    b = 1
+    mylist = []
+    mylist.append(a)
+    mylist.append(b)
+    for i in range(n):
+        print(i, "111")
+        # temp = a + b
+        # a = b
+        # b = temp
+
+        # 把b和temp分别赋值给a和b
+        a, b = b, a+b
+        mylist.append(a)
+        mylist.append(b)
+    # return a,b
+    return mylist
+# 连续生成n个斐波那契数
+def  getFibonacciGenerator(n):
+    a = 0
+    b = 1
+
+    for i in range(n):
+
+        if i > 0:
+            # 把b和temp分别赋值给a和b
+            a, b = b, a+b
+        yield a
+
+
+# 使用斐波那契数列生成器
+def fibonacciGeneratorDemo():
+    fg = getFibonacciGenerator(16)
+    # for item in fg:
+    #     print(item)
+        # time.sleep(1)
+    while True:
+        try:
+            print(next(fg))
+        except StopIteration:
+            break
+
+
+if __name__ == '__main__':
+    # simpleGenerator()
+    print(getFibonacciII(8))
+    # fibonacciGeneratorDemo()
+    pass
