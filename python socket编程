@@ -40,3 +40,47 @@ if __name__ == "__main__":
                 break
                 
     print("main over")
+    
+    
+    
+    
+#客户端
+#! C:\Python36\python.exe
+'''
+about what
+'''
+from socket import socket
+
+
+def func():
+    pass
+
+
+host = "127.0.0.1"
+port = 1234
+
+if __name__ == "__main__":
+    # 创建套接字对象
+    clientSocket = socket()
+
+    # 通过服务端地址（IP+端口），申请连接服务端socket
+    res = clientSocket.connect((host, port))
+    print(res)  # None
+
+    while True:
+
+        try:
+            msg = input("你对ta说：")
+
+            # 向服务端发送消息（bytes）
+            clientSocket.send(msg.encode("utf-8"))
+
+            # 接收服务端消息（bytes）
+            msg = clientSocket.recv(1024).decode("utf-8")
+            print("收到服务端消息：", msg)
+        except ConnectionAbortedError:
+            print("服务端已断开连接")
+            break
+
+    print("main over")
+
