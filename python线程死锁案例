@@ -1,0 +1,54 @@
+'''
+互相锁住对方线程需要的资源，造成死锁局面
+'''
+
+import threading
+from threading import Thread
+import time
+
+boyZunyan = threading.Lock()
+girlZunyan = threading.Lock()
+
+class Boy(Thread):
+    def run(self):
+        print("妈蛋气死劳资了战斗开始...")
+
+        # 锁住Girl所需的boyZunyan对象
+        if boyZunyan.acquire():
+            print("Boy:Gril必须先道歉!")
+            time.sleep(1)
+
+            # 需要girlZunyan才能继续执行
+            if girlZunyan.acquire(timeout=-1):
+                girlZunyan.release()
+                boyZunyan.release()
+                print("Boy:im sorry too！")
+            else:
+                print("Boy:....")
+
+        print("Boy战斗结束")
+
+class Girl(Thread):
+    def run(self):
+        print("妈蛋气死老娘了战斗开始...")
+
+        # 锁住Boy所需的girlZunyan对象
+        if girlZunyan.acquire():
+            print("Gril：Boy必须先道歉!")
+
+            # 需要boyZunyan才能继续执行
+            if boyZunyan.acquire(timeout=-1):
+                boyZunyan.release()
+                girlZunyan.release()
+                print("Girl:im sorry too！")
+            else:
+                print("Girl:妈蛋分手！")
+
+        print("Girl战斗结束")
+
+
+
+if __name__ == '__main__':
+    Boy().start()
+    Girl().start()
+    pass
