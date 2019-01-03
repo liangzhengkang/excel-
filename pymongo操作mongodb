@@ -4,6 +4,15 @@ pymongo.get_version_string() #版本
 
 client=pymongo.MongoClient(host="10.36.132.64",port=27017) #链接
 
+print(client) #链接信息
+
+print(client["infomations"])#查看详细信息
+
+print(client["infomations"]["document_class"])#查看文档详细信息
+
+collections=client["infomations"]
+print(type(collections),collections) #查看类型，查看链接信息
+
 db=client["huangjiajun"] #取出数据库
 print(db)#查看数据库信息
 
