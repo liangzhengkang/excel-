@@ -1,0 +1,33 @@
+import pymongo #导入模块
+
+pymongo.get_version_string() #版本
+
+client=pymongo.MongoClient(host="10.36.132.64",port=27017) #链接
+
+db=client["huangjiajun"] #取出数据库
+print(db)#查看数据库信息
+
+mycollection=db["huangjiajun"]
+print(mycollection) #数据库huangjiajun取出集合
+
+for  data in mycollection.find(): #查看某个集合的全部数据
+    print(data)
+    
+mycollection.insert({"name":"python","data":[1,2,3,4,5,6,7]}) #插入一条数据
+
+mycollection.delete_one({"name":"python"}) #删除数据  
+
+mycollection.delete_many({"huang":"huangjunjie"}) #删除多条数据
+
+
+datas =mycollection.find({"huang":"dahuang"})
+for  data in datas: #查看某个集合的全部数据
+    print(data)
+    
+mycollection.find_one({"huang":"dahuang"}) #查看一条数据
+
+mycollection.find_one_and_replace({"huang":"dahuang"},{"name":"nimei"})#找到并替换
+
+
+mycollection.find_one_and_update({"huang":"dahuang"},{"$set":{"name":"nimeimei"}})#找到并更新
+
