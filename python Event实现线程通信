@@ -1,0 +1,48 @@
+'''
+Event实现线程通信
+'''
+import threading
+
+import time
+
+
+def handleEvent(event):
+    global data
+    print("子线程正在循环监听事件...")
+    tname = threading.current_thread().getName()
+
+    while True:
+        event.wait()  # 阻塞监听事件
+        time.sleep(0.1)
+
+        # 3.拿到事件数据并处理
+        print("%s处理事件*%d" % (tname, data), event)
+
+        event.clear()
+        print("事件已被处理")
+
+    pass
+
+
+# 在栈内存中声明data
+data = 0
+if __name__ == '__main__':
+    event = threading.Event()
+
+    # 创建事件监听线程
+    threading.Thread(target=handleEvent, args=(event,), name="foo").start()#先开启在等着
+    threading.Thread(target=handleEvent, args=(event,), name="bas").start()
+    threading.Thread(target=handleEvent, args=(event,), name="pig").start()
+
+    for i in range(10):
+
+        # 1.改变数据
+        # data = 1 #重新声明局部变量data
+        data += 1
+
+        # 2.发布事件，通知数据已改变
+        event.set()#发送信息过去给等着的线程
+        print("\n事件已发布*%d\n" % (data))
+
+        time.sleep(1)
+    pass
