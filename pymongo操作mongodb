@@ -51,3 +51,23 @@ mycollection.find_one_and_replace({"huang":"dahuang"},{"name":"nimei"})#找到�
 mycollection.find_one_and_update({"huang":"dahuang"},{"$set":{"name":"nimeimei"}})#找到并更新
 
 mycollection.find_and_update({}, {"$inc":{"age":10}}, multi=True) #muti多行
+
+
+db=client
+users=db["doubi"] #新建一个数据库
+for u  in  users["doubi"].find():
+    print(u)
+users["doubi"].ensure_index([("name",pymongo.ASCENDING)]) #生成索引
+users["doubi"].drop_index([("name",pymongo.ASCENDING)]) #删除索引
+for  u  in  users["doubi"].list_indexes():
+    print(u)  #查看所有的索引
+users["doubi"].drop_indexes()#删除全部
+users["doubi"].reindex() #重建，插入数据以后需要更新，重建索引
+for u  in  users["doubi"].find({"age":{'$gt':4}}).explain(): #优化索引
+    print(u)
+print(users["doubi"].find({"age":{'$gt':4}}).explain()) #根据索引查找，速度快一些
+users["doubi"].ensure_index('age', unique=True) #唯一索引
+users["doubi"].__sizeof__()#查看空间长度
+users["doubi"].index_information() #索引的信息
+   
+
