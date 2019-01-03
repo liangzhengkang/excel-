@@ -1,0 +1,59 @@
+def createAndWrite():
+    # 以创写模式打开一个并不存在的文件
+    file = open(r"../res/doc/1.txt", "x", encoding="utf-8")
+    print(type(file))
+
+    # 向文档中写入数据
+    file.write("锄禾日当午\n汗滴禾下土\n一本小破书\n一看一下午\n")
+
+    # 让写入（缓存在缓冲区中）立刻生效
+    file.flush()
+
+    # 关闭文件流
+    file.close()
+    print("done")
+
+
+def readOnly():
+    # 以只读模式打开文件
+    file = open(r"../res/doc/1.txt", "r", encoding="utf-8")
+    print(type(file))  # <class '_io.TextIOWrapper'>文件流
+    # 读入文件内容
+    # content = file.read()#不写参数表示读入全部
+    content = file.read(3)  # 读入3个字符
+    print(content)
+    # # 尝试写入数据（只读模式无法写入）
+    # file.write("反正我也写不进去")#io.UnsupportedOperation: not writable
+    # 关闭文件流
+    file.close()
+
+
+def writeOnly():
+    # 以覆写模式打开文件，会清空文件内容（请谨慎）
+    file = open(r"../res/doc/1.txt", mode="w", encoding="utf-8")
+
+    # 写入内容
+    # file.write("锄禾日当午\n汗滴禾下土\n一本小破书\n一看一下午\n")
+    file.writelines(["锄禾日当午\n", "汗滴禾下土\n", "一本小破书\n", "一看一下午\n"])
+
+    # # 尝试读入文件（不可读）
+    # file.read()#io.UnsupportedOperation: not readable
+
+    # 关闭文件流
+    file.close()
+    print("done")
+
+
+def appendMode():
+    # 追加模式打开文件
+    file = open(r"../res/doc/1.txt", "a", encoding="utf-8")
+    file.write("——悯码农")
+    file.close()
+
+
+if __name__ == '__main__':
+    createAndWrite()
+    readOnly()
+    writeOnly()
+    appendMode()
+    pass
