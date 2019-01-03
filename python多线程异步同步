@@ -1,0 +1,53 @@
+import threading
+import time
+
+
+def doSth(task):
+    print("doSth@",threading.current_thread().getName())
+    tName = threading.current_thread().getName()
+    for i in range(5):
+        print("执行【%s】@%s * %d"%(task,tName,i))
+        time.sleep(1)
+
+# 线程异步（并发执行）示例
+def asyncDemo():
+    for i in range(5):
+        t = threading.Thread(target=doSth, args=("巡山",), name="小分队%d" % (i))
+        t.start()#子线程中的业务（doSth）哪怕要执行一年，但t.start()是瞬间完成的
+
+# 线程同步（依次执行）示例
+def syncDemo():
+    for i in range(5):
+        t = threading.Thread(target=doSth, args=("巡山",), name="小分队%d" % (i))
+        t.start()#t.start()运行在主线程，瞬间执行完毕
+
+        t.join()  # 后边的代码给劳资等着：等待（阻塞）直到t终止（执行完毕或意外退出）
+        print("----------")
+    print("主线程：吾去也！")
+
+class MyThread(threading.Thread):
+    def __init__(self,name):
+        super().__init__()
+        tn = threading.current_thread().getName()
+        print("__init__@%s"%(tn))
+        self.name = name
+        for i in range(10):
+            print(i)
+
+    def run(self):
+        print("run@%s"%(self.name))
+
+# 同步示例2
+def syncDemoII():
+    for i in range(5):
+        mt = MyThread("小分队%d" % (i))
+        mt.start()
+        mt.join()  # 阻塞到mt内的run方法结束
+
+
+if __name__ == '__main__':
+
+    asyncDemo()
+    syncDemo()
+    syncDemoII()
+    pass
