@@ -15,7 +15,7 @@ collections=client["infomations"]
 print(type(collections),collections) #查看类型，查看链接信息
 
 print(client.get_database("admin"))
-db=client.huangjiajun  #huangjiajun是一个数据库名字没有回自动创建
+db=client.huangjiajun  #huangjiajun是一个数据库名字,没有回自动创建
 myset=db.myset #myset是一个集合名字没有回自动创建
 myset.insert({"name":"huangjian"})
 
@@ -28,6 +28,10 @@ print(mycollection) #数据库huangjiajun取出集合
 for  data in mycollection.find(): #查看某个集合的全部数据
     print(data)
     
+#mydata=dict(name="python",data=[1,2,3,4,5,6,7]) #字典风格转换
+#mycollection.insert(mydata) #插入一条数据   
+#mycollection.save(mydata)#存在就覆盖，不存在创建
+
 mycollection.insert({"name":"python","data":[1,2,3,4,5,6,7]}) #插入一条数据
 
 mycollection.delete_one({"name":"python"}) #删除数据  
@@ -39,10 +43,11 @@ datas =mycollection.find({"huang":"dahuang"})
 for  data in datas: #查看某个集合的全部数据
     print(data)
     
-mycollection.find_one({"huang":"dahuang"}) #查看一条数据
+userhuang = mycollection.find_one({"name":"python"})
+print(userhuang["data"]) #查看一条数据中的data字段的数据
 
 mycollection.find_one_and_replace({"huang":"dahuang"},{"name":"nimei"})#找到并替换
 
-
 mycollection.find_one_and_update({"huang":"dahuang"},{"$set":{"name":"nimeimei"}})#找到并更新
 
+mycollection.find_and_update({}, {"$inc":{"age":10}}, multi=True) #muti多行
