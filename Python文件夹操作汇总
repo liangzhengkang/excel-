@@ -1,0 +1,31 @@
+import os
+import shutil
+if __name__ == '__main__':
+    # 创建单级文件夹
+    os.mkdir(r"../res")
+    os.mkdir(r"../res/doc")
+
+    # 创建层级文件夹
+    os.makedirs(r"../res/img/large")
+
+    # 删除空文件夹
+    os.rmdir(r"../res/img")
+
+    # 删除有内容的文件夹
+    shutil.rmtree(r"../res/img")
+
+    # 删除文件或文件夹
+    os.remove(r"../res/doc/1.txt")
+    os.removedirs(r"../res/doc")  # 删除一整条空路径
+
+    # 判断路径是否存在
+    fileExists = os.path.exists(r"../res/doc/1.txt")
+    print(fileExists)
+
+    # 判断路径是否是文件/文件夹
+    isFile = os.path.isfile(r"../res/doc/1.txt")
+    isDir = os.path.isdir(r"../res/doc/1.txt")
+    print(isFile)
+    print(isDir)
+
+    pass
