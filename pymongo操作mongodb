@@ -14,6 +14,11 @@ print(client["infomations"]["document_class"])#查看文档详细信息
 collections=client["infomations"]
 print(type(collections),collections) #查看类型，查看链接信息
 
+print(client.get_database("admin"))
+db=client.huangjiajun  #huangjiajun是一个数据库名字没有回自动创建
+myset=db.myset #myset是一个集合名字没有回自动创建
+myset.insert({"name":"huangjian"})
+
 db=client["huangjiajun"] #取出数据库
 print(db)#查看数据库信息
 
