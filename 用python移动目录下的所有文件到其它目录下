@@ -1,0 +1,5 @@
+import os
+import shutil
+path1 = ''  # 原文件存储目录
+path2 = ''  # 要移动到的目标文件目录
+shutil.move(path1, path2)
